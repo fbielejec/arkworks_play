@@ -13,7 +13,7 @@ fn zeroknowledge() -> anyhow::Result<()> {
     // y = (x+z)^2+z+1
     // y = x^2 + z^2 + 2xz + z + 1
     // in SNARK language: I know x and z such that y=11
-    // x=1 and z=2 => y=11
+    // x=1 and z=2 => y=12
 
     let cs = ConstraintSystem::<Fr>::new_ref();
 
@@ -23,7 +23,7 @@ fn zeroknowledge() -> anyhow::Result<()> {
     let x = cs.new_witness_variable(|| Ok(Fr::from(1)))?;
     let z = cs.new_witness_variable(|| Ok(Fr::from(2)))?;
     let t1 = cs.new_witness_variable(|| Ok(Fr::from(1) * Fr::from(1)))?;
-    let t2 = cs.new_witness_variable(|| Ok(Fr::from(2) * Fr::from(1)))?;
+    let t2 = cs.new_witness_variable(|| Ok(Fr::from(2) * Fr::from(2)))?;
     let t3 = cs.new_witness_variable(|| Ok(Fr::from(2) * Fr::from(1) * Fr::from(2)))?;
 
     // public input
@@ -46,15 +46,15 @@ fn zeroknowledge() -> anyhow::Result<()> {
     cs.enforce_constraint(zero + t1 + t2 + t3 + z + one, one.into(), y.into())?; // y = T1 + T2 + T3 + z + 1
 
     cs.finalize();
-    assert!(cs.is_satisfied().is_ok());
+    assert!(cs.is_satisfied().unwrap(), "CS is not satisfied");
 
     let matrices = cs.to_matrices().unwrap();
 
-    println!("{:#?}", matrices.a);
-    println!();
-    println!("{:#?}", matrices.b);
-    println!();
-    println!("{:#?}", matrices.c);
+    // println!("{:#?}", matrices.a);
+    // println!();
+    // println!("{:#?}", matrices.b);
+    // println!();
+    // println!("{:#?}", matrices.c);
 
     Ok(())
 }
