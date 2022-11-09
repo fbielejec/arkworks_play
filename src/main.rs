@@ -18,11 +18,15 @@ fn zeroknowledge() -> anyhow::Result<()> {
     let cs = ConstraintSystem::<Fr>::new_ref();
 
     // 6 variables in the system
+
+    // private witness
     let x = cs.new_witness_variable(|| Ok(Fr::from(1)))?;
     let z = cs.new_witness_variable(|| Ok(Fr::from(2)))?;
-    let t1 = cs.new_input_variable(|| Ok(Fr::from(1) * Fr::from(1)))?;
-    let t2 = cs.new_input_variable(|| Ok(Fr::from(2) * Fr::from(1)))?;
-    let t3 = cs.new_input_variable(|| Ok(Fr::from(2) * Fr::from(1) * Fr::from(2)))?;
+    let t1 = cs.new_witness_variable(|| Ok(Fr::from(1) * Fr::from(1)))?;
+    let t2 = cs.new_witness_variable(|| Ok(Fr::from(2) * Fr::from(1)))?;
+    let t3 = cs.new_witness_variable(|| Ok(Fr::from(2) * Fr::from(1) * Fr::from(2)))?;
+
+    // public input
     let y = cs.new_input_variable(|| {
         Ok(Fr::from(1) * Fr::from(1)
             + Fr::from(2) * Fr::from(1) * Fr::from(2)
